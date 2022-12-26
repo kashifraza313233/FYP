@@ -1,0 +1,231 @@
+﻿@model SecuritySafeZone.Models.Report
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Report Section</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJVLuW8M2WfeXqXYyqIlR_krvnCI-v-Tw&callback=initMap&v=weekly" defer></script>
+
+    <style>
+
+
+        body {
+            font-family: Arial;
+        }
+
+        .card-header {
+            background: teal;
+            color: white;
+        }
+
+        .panel-title {
+            color: teal;
+        }
+
+        .container input {
+            display: inline-block;
+        }
+
+        input[type=date], input[type=time] {
+            width: 60%;
+        }
+        /* Header/Logo Title */
+
+        .col-md-10 {
+            width: 70%;
+        }
+
+        .buttons .button1 {
+            background: teal; /* Green */
+            color: white;
+            height: 50px;
+            text-decoration: none;
+            font-size: 20px;
+            cursor: pointer;
+            width: 230px;
+            display: block;
+        }
+
+            .buttons.button1:not(:last-child) {
+                border-bottom: none; /* Prevent double borders */
+            }
+
+            .buttons .button1:hover {
+                background-color: teal;
+            }
+
+        .button .button2 {
+            background: teal; /* Green */
+
+            color: white;
+            height: 40px;
+            text-decoration: none;
+            font-size: 20px;
+            cursor: pointer;
+            width: 50px;
+            display: block;
+            margin-top: -60px;
+            margin-left: 30px;
+        }
+
+
+            .button.button2:not(:last-child) {
+                border-bottom: none; /* Prevent double borders */
+            }
+
+            .button.button2:hover {
+                background-color: teal;
+            }
+
+        #dvMap {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card-header text-center">
+        <h1>Zone Section</h1>
+    </div>
+    <div class="button">
+        <a href="https://localhost:44315/ReportIncident/Reportlist"> <img class="button2" src="~/Content/arrow-112-xl.png" /></a>
+    </div>
+    <br>
+    @using (Html.BeginForm("Approve", "ReportIncident", new { Rid = Model.Rid }, FormMethod.Post))
+    {
+        @Html.HiddenFor(model => model.Boundary)
+        @Html.HiddenFor(model => model.Lat)
+        @Html.HiddenFor(model => model.Lng)
+        @*@Html.HiddenFor(model => model.Description)*@
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <div class="panel-title text-center">
+                <h2>Danger Zone</h2>
+            </div>
+            <br>
+            <center>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+
+                <div class="container">
+                    @*@Html.LabelFor(model => model.Lat, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Lat, new { htmlAttributes = new { @class = "form-control", type = "hidden", @id = "latclicked" } })
+                        @Html.ValidationMessageFor(model => model.Lat, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="container">
+                    @*@Html.LabelFor(model => model.Lng, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Lng, new { htmlAttributes = new { @class = "form-control", type = "hidden", @id = "longclicked" } })
+                        @Html.ValidationMessageFor(model => model.Lng, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div id="dvMap">
+                </div>
+                <br />
+
+                <div class="buttons">
+                    <button class="button1" onclick="document.location='https://localhost:44315/ReportIncident/ReportApproveSection'">Submit</button>
+                </div>
+
+                <br />
+
+
+                <script>
+
+                    window.onload = function () {
+                        var mapOptions = {
+                            center: new google.maps.LatLng(33.6844, 73.0479),
+                            zoom: 10,
+                            mapTypeId: google.maps.MapTypeId.ROADMAP
+
+                        };
+                        var infoWindow = new google.maps.InfoWindow();
+
+                        var map = new google.maps.Map(document.getElementById("dvMap"), mapOptions);
+                        var geocoder = new google.maps.Geocoder();
+
+                        var marker = new google.maps.Marker({
+                            position: new google.maps.LatLng(document.getElementById("Lat").value, document.getElementById("Lng").value),
+                            map: map
+                        });
+
+
+                        // Update lat/long value of div when anywhere in the map is clicked
+                        google.maps.event.addListener(map, 'click', function (event) {
+                            var latLng = event.latLng;
+                            placeMarker(map, event.latLng);
+                            document.getElementById('latclicked').value = event.latLng.lat();
+                            document.getElementById('longclicked').value = event.latLng.lng();
+                        })
+                        var prevPoint = { lat: 0.0, lng: 0.0 };
+                        function placeMarker(map, location) {
+                            var marker = new google.maps.Marker({
+                                position: location,
+                                map: map
+                            });
+
+                            var v = document.getElementById("Boundary").value;
+                            //alert(v);
+                            if (v != null || v != "")
+                                v = v + ";";
+                            v = v + location;
+                            document.getElementById("Boundary").value = v;
+                            if (prevPoint.lat != 0) {
+
+                                var lineColor = "#FF0000";
+
+                                const points = [
+                                    prevPoint, location,
+
+                                ]
+                                var line = new google.maps.Polyline({
+                                    path: points,
+                                    strokeColor: lineColor,
+                                    strokeOpacity: 1.0,
+                                    strokeWeight: 3,
+
+                                    map: map
+                                });
+                            }
+
+                            prevPoint = location;
+
+                            //var infowindow = new google.maps.InfoWindow({
+                            //    content: 'Latitude: ' + location.lat() +
+                            //        '<br>Longitude: ' + location.lng()
+                            //});
+                            //infowindow.open(map, marker);
+                        }
+
+                    }
+                </script>
+
+            </center>
+        </div>
+    }
+
+    @*<center>*@
+
+    @*</center>*@
+
+
+    @*<div>
+            @Html.ActionLink("Back to List", "Index")
+        </div>*@
+</body>
+</html>

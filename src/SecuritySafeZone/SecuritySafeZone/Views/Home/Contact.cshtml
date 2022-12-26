@@ -1,0 +1,54 @@
+﻿@{
+    ViewBag.Title = "Contact";
+}
+@*<h2>@ViewBag.Title.</h2>
+    <h3>@ViewBag.Message</h3>
+
+    <address>
+        One Microsoft Way<br />
+        Redmond, WA 98052-6399<br />
+        <abbr title="Phone">P:</abbr>
+        425.555.0100
+    </address>
+
+    <address>
+        <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
+        <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
+    </address>*@
+<html>
+<head>
+    <script src="https://maps.googleapis.com/maps/api/js?"></script>
+</head>
+<body>
+    <input type="button" value="Click to Display Map" onclick="DisplayGoogleMap()" />
+    <div id="myDiv" style="width:100%;height:400px;"></div>
+
+    <script type="text/javascript">
+
+        function DisplayGoogleMap() {
+
+            //Set the Latitude and Longitude of the Map
+            var myAddress = new google.maps.LatLng(24.466807, 54.384297);
+
+            //Create Options or set different Characteristics of Google Map
+            var mapOptions = {
+                center: myAddress,
+                zoom: 15,
+                minZoom: 15,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+
+            //Display the Google map in the div control with the defined Options
+            var map = new google.maps.Map(document.getElementById("myDiv"), mapOptions);
+
+            //Set Marker on the Map
+            var marker = new google.maps.Marker({
+                position: myAddress,
+                animation: google.maps.Animation.BOUNCE,
+            });
+
+            marker.setMap(map);
+           }
+    </script>
+</body>
+</html>  

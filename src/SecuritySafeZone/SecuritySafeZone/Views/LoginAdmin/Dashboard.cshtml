@@ -1,0 +1,74 @@
+﻿
+@{
+
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Dashboard</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <style>
+
+        .card-header {
+            background: teal;
+            color: white;
+            height: 60px;
+        }
+
+        .panel-title {
+            color: teal;
+        }
+
+        .buttons .button {
+            background: teal; /* Green */
+            margin-top: 10px;
+            color: white;
+            padding: 10px 40px;
+            text-align: center;
+            align-items: center;
+            height: 50px;
+            text-decoration: none;
+            font-size: 20px;
+            cursor: pointer;
+            width: 230px;
+            display: block;
+        }
+
+            .buttons.button:not(:last-child) {
+                border-bottom: none; /* Prevent double borders */
+            }
+
+            .buttons .button:hover {
+                background-color: teal;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="card-header text-center ">
+        <h1>SafeZone</h1>
+        @*<p>Welcome <u>@TempData["LoginMessage"]</u></p>*@
+    </div>
+    <br />
+    <div class="panel-title text-center ">
+        <h2>Welcome Dear Admin</h2>
+    </div>
+    <br />
+    <center>
+        <div class="buttons">
+            <button class="button" onclick="document.location='https://localhost:44315/Login/userlist'">User Accounts</button>
+            <button class="button" onclick="document.location='https://localhost:44315/PoliceSignup/Policelist'">Police Accounts</button>
+            <button class="button" onclick="document.location=''">Update Security</button>
+            <button class="button" onclick="document.location='https://localhost:44315/LoginAdmin/Index'">Exit</button>
+        </div>
+    </center>
+
+</body>
+</html>
